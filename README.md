@@ -1,4 +1,4 @@
-# Donkeycar: a python self driving library
+# DonkeyLIM: Yhe donkeycar of LIM Mechatronics Lab
 
 
 ![Build Status](https://github.com/autorope/donkeycar/actions/workflows/python-package-conda.yml/badge.svg?branch=main)
