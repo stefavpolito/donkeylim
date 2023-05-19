@@ -1,7 +1,9 @@
 # DonkeyLIM: The donkeycar of LIM Mechatronics Lab
 
 The original repository of donkeycar can be found at https://github.com/autorope/donkeycar
+
 Huge shout out to this community, you are amazing guys!
+
 The DonkeyLIM is used for educational purposes only as a low-budget research platform.
 
 Donkeycar is minimalist and modular self driving library for Python. It is
