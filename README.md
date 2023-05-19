@@ -1,19 +1,8 @@
-# DonkeyLIM: Yhe donkeycar of LIM Mechatronics Lab
+# DonkeyLIM: The donkeycar of LIM Mechatronics Lab
 
-
-![Build Status](https://github.com/autorope/donkeycar/actions/workflows/python-package-conda.yml/badge.svg?branch=main)
-![Lint Status](https://github.com/autorope/donkeycar/actions/workflows/superlinter.yml/badge.svg?branch=main)
-![Release](https://img.shields.io/github/v/release/autorope/donkeycar)
-
-
-[![All Contributors](https://img.shields.io/github/contributors/autorope/donkeycar)](#contributors-)
-![Issues](https://img.shields.io/github/issues/autorope/donkeycar)
-![Pull Requests](https://img.shields.io/github/issues-pr/autorope/donkeycar?)
-![Forks](https://img.shields.io/github/forks/autorope/donkeycar)
-![Stars](https://img.shields.io/github/stars/autorope/donkeycar)
-![License](https://img.shields.io/github/license/autorope/donkeycar)
-
-![Discord](https://img.shields.io/discord/662098530411741184.svg?logo=discord&colorB=7289DA)
+The original repository of donkeycar can be found at https://github.com/autorope/donkeycar
+Huge shout out to this community, you are amazing guys!
+The DonkeyLIM is used for educational purposes only as a low-budget research platform.
 
 Donkeycar is minimalist and modular self driving library for Python. It is
 developed for hobbyists and students with a focus on allowing fast experimentation and easy
@@ -24,7 +13,7 @@ community contributions.
 * [Build instructions and Software documentation](http://docs.donkeycar.com)
 * [Discord / Chat](https://discord.gg/PN6kFeA)
 
-![donkeycar](https://github.com/autorope/donkeydocs/blob/master/docs/assets/build_hardware/donkey2.png)
+![donkeycar](https://github.com/stefavpolito/donkeylim/donkeylim.jpg)
 
 #### Use Donkey if you want to:
 * Make an RC car drive its self.
