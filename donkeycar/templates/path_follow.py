@@ -21,7 +21,7 @@ Starts in user mode.
     driving records path waypoints.
   - drive to record a path; make the start and end close to each other.
   - if you don't like path, select the reset button and it will
-    reset the origin _AND_ erase the path from memory.  MOve the
+    reset the origin _AND_ erase the path from memory.  Move the
     vehicle back to where the physical origin is and start driving
     again to record a new path.
   - if you like the path, select the save button to save it. 
