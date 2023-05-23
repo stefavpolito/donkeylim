@@ -553,8 +553,8 @@ FPS_DEBUG_INTERVAL = 10    # the interval in seconds for printing the frequency 
 # computer vision template
 #
 # configure which part is used as the autopilot - change to use your own autopilot
-CV_CONTROLLER_MODULE = "donkeycar.parts.line_follower"
-CV_CONTROLLER_CLASS = "LineFollower"
+CV_CONTROLLER_MODULE = "donkeycar.parts.line_follower_acc"
+CV_CONTROLLER_CLASS = "LineFollowerACC"
 CV_CONTROLLER_INPUTS = ['cam/image_array']
 CV_CONTROLLER_OUTPUTS = ['pilot/steering', 'pilot/throttle', 'cv/image_array']
 CV_CONTROLLER_CONDITION = "run_pilot"
@@ -600,6 +600,8 @@ PID_D_DELTA = 0.00005 # amount the inc/dec function will change the D value
 OVERLAY_IMAGE = True  # True to draw computer vision overlay on camera image in web ui
                       # NOTE: this does not affect what is saved to the data
 
+# LineFollowerACC - Parameters
+SAFE_DISTANCE = 10    # safe distance in cm
 
 #
 # Assign path follow functions to buttons.
