@@ -9,11 +9,11 @@ logger = logging.getLogger(__name__)
 
 #GPIO Mode (BOARD / BCM)
 GPIO.setmode(GPIO.BCM)
- 
+
 #set GPIO Pins
-GPIO_TRIGGER = 18
+GPIO_TRIGGER = 23
 GPIO_ECHO = 24
- 
+
 #set GPIO direction (IN / OUT)
 GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
 GPIO.setup(GPIO_ECHO, GPIO.IN)
@@ -39,7 +39,7 @@ class LineFollowerACC:
         self.color_thr_hi = np.asarray(cfg.COLOR_THRESHOLD_HIGH)  # hsv light yellow
         self.target_pixel = cfg.TARGET_PIXEL  # of the N slots above, which is the ideal relationship target
         self.target_threshold = cfg.TARGET_THRESHOLD # minimum distance from target_pixel before a steering change is made.
-        self.confidence_threshold = cfg.CONFIDENCE_THRESHOLD  # percentage of yellow pixels that must be in target_pixel slice
+        self.confidence_threshold = cfg.CONFIDENCE_THRESHOLD  # percentage of yellow pixels that must be in target_pixel sl$
         self.steering = 0.0 # from -1 to 1
         self.throttle = cfg.THROTTLE_INITIAL # from -1 to 1
         self.delta_th = cfg.THROTTLE_STEP  # how much to change throttle when off
@@ -75,15 +75,43 @@ class LineFollowerACC:
         return max_yellow, hist[max_yellow], mask
 
 
+    def distance(self):
+        # set Trigger to HIGH
+        GPIO.output(GPIO_TRIGGER, True)
+
+        # set Trigger after 0.01ms to LOW
+        time.sleep(0.00001)
+        GPIO.output(GPIO_TRIGGER, False)
+
+        StartTime = time.time()
+        StopTime = time.time()
+
+        # save StartTime
+        while GPIO.input(GPIO_ECHO) == 0:
+            StartTime = time.time()
+
+        # save time of arrival
+        while GPIO.input(GPIO_ECHO) == 1:
+            StopTime = time.time()
+
+        # time difference between start and arrival
+        TimeElapsed = StopTime - StartTime
+        # multiply with the sonic speed (34300 cm/s)
+        # and divide by 2, because there and back
+        dist = (TimeElapsed * 34300) / 2
+
+        return dist
+
+
     def run(self, cam_img):
         '''
         main runloop of the CV controller
         input: cam_image, an RGB numpy array
         output: steering, throttle, and the image.
         If overlay_image is True, then the output image
-        includes and overlay that shows how the 
+        includes and overlay that shows how the
         algorithm is working; otherwise the image
-        is just passed-through untouched. 
+        is just passed-through untouched.
         '''
         if cam_img is None:
             return 0, 0, False, None
@@ -101,32 +129,8 @@ class LineFollowerACC:
             # this is the target of our steering PID controller
             self.pid_st.setpoint = self.target_pixel
 
-        def distance():
-            # set Trigger to HIGH
-            GPIO.output(GPIO_TRIGGER, True)
-            
-            # set Trigger after 0.01ms to LOW
-            time.sleep(0.00001)
-            GPIO.output(GPIO_TRIGGER, False)
-            
-            StartTime = time.time()
-            StopTime = time.time()
-            
-            # save StartTime
-            while GPIO.input(GPIO_ECHO) == 0:
-                StartTime = time.time()
-            
-            # save time of arrival
-            while GPIO.input(GPIO_ECHO) == 1:
-                StopTime = time.time()
-            
-            # time difference between start and arrival
-            TimeElapsed = StopTime - StartTime
-            # multiply with the sonic speed (34300 cm/s)
-            # and divide by 2, because there and back
-            distance = (TimeElapsed * 34300) / 2
-            
-            return distance
+        # ACC actual distance
+        self.actual_distance = self.distance()
 
         if confidence >= self.confidence_threshold:
             # invoke the controller with the current yellow line position
@@ -134,24 +138,22 @@ class LineFollowerACC:
             self.steering = self.pid_st(max_yellow)
 
             # ACC - Adaptive Cruise Control
-            # slow down linearly when approaching the safe distance, 
+            # slow down linearly when approaching the safe distance,
             # and speed up to throttle max when far from the object in front
-            self.actual_distance = distance()
 
             if abs(self.actual_distance) > self.distance_safe:
                 # we are far from the obstacle, so speed up
                 if self.throttle < self.throttle_max:
-                    self.throttle += self.delta_th
+                    self.throttle = 0.065*(self.actual_distance-self.distance_safe)
                 if self.throttle > self.throttle_max:
                     self.throttle = self.throttle_max
             else:
                 # we are approaching the obstacle, so slow down
                 if self.throttle > self.throttle_min:
-                    self.throttle -= self.delta_th
+                    self.throttle = 0.05*(self.actual_distance-self.distance_safe)
                 if self.throttle < self.throttle_min:
                     self.throttle = self.throttle_min
-                
-            
+
             """ # Original - slow down linearly when away from ideal, and speed up when close
             if abs(max_yellow - self.target_pixel) > self.target_threshold:
                 # we will be turning, so slow down
@@ -191,6 +193,7 @@ class LineFollowerACC:
         display_str.append("THROTTLE:{:.2f}".format(self.throttle))
         display_str.append("I YELLOW:{:d}".format(max_yellow))
         display_str.append("CONF:{:.2f}".format(confidense))
+        display_str.append("DISTANCE:{:.2f}".format(self.actual_distance))
 
         y = 10
         x = 10
@@ -200,5 +203,3 @@ class LineFollowerACC:
             y += 10
 
         return img
-
-
