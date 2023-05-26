@@ -4,6 +4,7 @@ from simple_pid import PID
 import logging
 import RPi.GPIO as GPIO
 import time
+import donkeycar.parts.imu as IMU
 
 logger = logging.getLogger(__name__)
 
